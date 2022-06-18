@@ -10,7 +10,6 @@ class CutDownUrl(models.Model):
     created_at = models.DateTimeField(editable=False, auto_now_add=True)
     modified_at = models.DateTimeField(auto_now=True)
 
-
     def save(self, *args, **kwargs):
         if not self.id:
             self.created_at = timezone.now()

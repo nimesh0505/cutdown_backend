@@ -1,6 +1,5 @@
-
-
 from django.urls import re_path
+
 # from cutdown_backend.urlshortner.models import CutDownUrl
 
 from urlshortner.views import HealthCheckView
@@ -16,4 +15,4 @@ urlpatterns = [
     #     CutDownUrlView.as_view(),
     #     name="health_check",
     # )
-    ]
+]
