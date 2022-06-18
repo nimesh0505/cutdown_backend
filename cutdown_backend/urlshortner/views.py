@@ -1,5 +1,7 @@
 import logging
 
+from django.utils.decorators import method_decorator
+from ratelimit.decorators import ratelimit
 from rest_framework import status
 from rest_framework.permissions import AllowAny
 from rest_framework.request import Request
@@ -30,6 +32,7 @@ class ShortenURLView(APIView):
     ]
     allowed_methods = ("post",)
 
+    @method_decorator(ratelimit(key='ip', rate='10/m', method="POST", block=True))
     def post(self, request: Request):
         serializer = self.serializer_class(data=request.data)
         serializer.is_valid(raise_exception=True)
