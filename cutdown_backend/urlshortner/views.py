@@ -52,11 +52,14 @@ class RedirectURLView(APIView):
     allowed_methods = ("get",)
 
     def get(self, request: Request, shorten_key: str):
+        clients_ip = request.META.get("REMOTE_ADDR")
+        log.info(f"clients IP {clients_ip}")
+
         instance = ShortenURL.objects.filter(shorten_key=shorten_key).first()
         if not instance:
+            log.info(f"shorten key {shorten_key} not found")
             return Response(
                 data={"message": "Unable to find URL to redirect to"},
                 status=status.HTTP_404_NOT_FOUND,
             )
-
         return HttpResponseRedirect(redirect_to=instance.origin_url)
