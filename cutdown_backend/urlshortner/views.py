@@ -13,7 +13,6 @@ class HealthCheckView(APIView):
     allowed_methods = ("get")
     
     def get(self, request: Request):
-        log.info("Demo")
         return Response(data={"Server is running"}, status=status.HTTP_200_OK)
 
 

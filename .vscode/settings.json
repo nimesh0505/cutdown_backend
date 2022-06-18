@@ -1,0 +1,37 @@
+{
+    "python.defaultInterpreterPath": "./venv/bin/python3",
+    "python.linting.pycodestyleEnabled": true,
+    "python.formatting.provider": "black",
+    "python.linting.pycodestyleArgs": [
+        "--max-line-length=100"
+    ],
+    "editor.formatOnSave": true,
+    "editor.wordWrap": "wordWrapColumn",
+    "editor.wordWrapColumn": 100,
+    "restructuredtext.confPath": "${workspaceFolder}/source",
+    "spellright.language": [],
+    "spellright.documentTypes": [
+        "markdown",
+        "latex"
+    ],
+    "editor.bracketPairColorization.enabled": true,
+    "editor.codeActionsOnSave": {
+        "source.organizeImports": true
+    },
+    "python.sortImports.args": [
+        "--trailing-comma",
+        "--line-width",
+        "100",
+        "--multi-line",
+        "3",
+        "-p",
+        "cutdown_backend",
+        "-p",
+        "urlshortner",
+    ],
+    "python.testing.pytestArgs": [
+        "checkout"
+    ],
+    "python.testing.unittestEnabled": false,
+    "python.testing.pytestEnabled": true
+}
