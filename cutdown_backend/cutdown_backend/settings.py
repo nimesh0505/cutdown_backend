@@ -10,10 +10,10 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.2/ref/settings/
 """
 
-from pathlib import Path
-from dotenv import load_dotenv
 import os
+from pathlib import Path
 
+from dotenv import load_dotenv
 
 load_dotenv()
 
@@ -121,3 +121,6 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 
 LOGDNA_INGESTION_KEY = os.getenv("LOGDNA_INGESTION_KEY")
+
+
+BASE_URL = os.getenv("BASE_URL")

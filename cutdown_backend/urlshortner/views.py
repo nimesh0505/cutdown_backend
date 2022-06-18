@@ -6,6 +6,8 @@ from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from urlshortner.serialisers import ShortenURLResponseSerialiser, ShortenURLSerialiser
+
 log = logging.getLogger("django")
 
 
@@ -16,14 +18,23 @@ class HealthCheckView(APIView):
     allowed_methods = "get"
 
     def get(self, request: Request):
-        return Response(data={"Server is running"}, status=status.HTTP_200_OK)
+        return Response(
+            data={"health_status": "server is running"}, status=status.HTTP_200_OK
+        )
 
 
-class CutDownUrlView(APIView):
+class ShortenURLView(APIView):
+    serializer_class = ShortenURLSerialiser
     permission_classes = [
         AllowAny,
     ]
-    allowed_methods = "post"
+    allowed_methods = ("post",)
 
     def post(self, request: Request):
-        pass
+        serializer = self.serializer_class(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        result = serializer.create()
+        return Response(
+            data=ShortenURLResponseSerialiser({"shorten_url": result.shorten_key}).data,
+            status=status.HTTP_201_CREATED,
+        )
