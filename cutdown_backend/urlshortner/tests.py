@@ -1,9 +1,12 @@
+import time
+
 from django.conf import settings
 from django.test import TestCase
 from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APIClient, APITestCase
 
+from urlshortner.factories import ShortenURLFactory
 from urlshortner.models import ShortenURL
 
 client = APIClient()
@@ -27,7 +30,6 @@ class TestShortenURLCreation(APITestCase):
         return super().setUp()
 
     def test_should_successfully_return_shorten_url(self):
-
         response = client.post(reverse("shorten_url"), {"origin_url": self.origin_url})
         response_body = response.json()
 
@@ -46,3 +48,14 @@ class TestShortenURLCreation(APITestCase):
         total_records = ShortenURL.objects.all().count()
 
         self.assertEqual(total_records, 1)
+
+
+class TestRedirect(TestCase):
+    def setUp(self) -> None:
+        ShortenURLFactory.create_batch(10, origin_url=f"https://www.yahho.com")
+        return super().setUp()
+
+    def test_should_sucessfully_fetch_shorten_key(self):
+        instance = ShortenURL.objects.last()
+        response = client.get(path=f"/{instance.shorten_key}")
+        self.assertEqual(response.status_code, status.HTTP_302_FOUND)
