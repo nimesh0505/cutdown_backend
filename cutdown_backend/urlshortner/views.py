@@ -1,4 +1,5 @@
 import logging
+from cgitb import enable
 
 from django.http import HttpResponseRedirect
 from django.utils.decorators import method_decorator
@@ -67,6 +68,7 @@ class ShortenURLView(APIView):
     summary="Redirect API",
     description="API is used for redirecting to target URL",
     tags=["Redirect"],
+    exclude=True,
 )
 class RedirectURLView(APIView):
     permission_classes = [
