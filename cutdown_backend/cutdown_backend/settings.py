@@ -153,3 +153,9 @@ DJANGO_GUID = {
     "EXPOSE_HEADER": True,
     "UUID_LENGTH": 32,
 }
+
+
+ENVIRONMENT = os.getenv("ENVIRONMENT")
+
+
+BACKEND_URL = os.getenv("BACKEND_URL")

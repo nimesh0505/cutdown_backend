@@ -1,14 +1,15 @@
 import json
-from cgitb import reset
-from email import message
 
 import requests
 from rest_framework import status
 
+from cutdown_ui.apis import URL_SHORTNER_API
+
 
 def get_shorten_url(url: str) -> str:
+
     response = requests.post(
-        url=f"http://127.0.0.1:8000/shorten_url",
+        url=URL_SHORTNER_API,
         headers={"Content-Type": "application/json; charset=utf-8"},
         data=json.dumps({"origin_url": url}),
     )
