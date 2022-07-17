@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Example</title>
+</head>
+
+<body>
+    <form method="POST" action="">{% csrf_token %}
+        text: <input type="text" name="target_url" value=""><br>
+        <input type="submit" value="Submit">
+    </form>
+    <p> {% if shorten_url %}
+        {{ shorten_url }}
+        {% else %}
+        {{ message|safe }}
+        {% endif %}
+    </p>
+
+</body>
+
+</html>

@@ -38,8 +38,16 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "rest_framework",
+    "django_guid",
+    "drf_spectacular",
     "urlshortner",
+    "cutdown_ui",
 ]
+
+REST_FRAMEWORK = {
+    "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
+}
+
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
@@ -48,15 +56,18 @@ MIDDLEWARE = [
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
-    "django.middleware.clickjacking.XFrameOptionsMiddleware"
+    "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "django_guid.middleware.guid_middleware",
 ]
 
 ROOT_URLCONF = "cutdown_backend.urls"
 
+TEMPLATE_DIR = os.path.join(BASE_DIR, "templates")
+
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [],
+        "DIRS": [TEMPLATE_DIR],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -124,3 +135,21 @@ LOGDNA_INGESTION_KEY = os.getenv("LOGDNA_INGESTION_KEY")
 
 
 BASE_URL = os.getenv("BASE_URL")
+
+
+SPECTACULAR_SETTINGS = {
+    "TITLE": "Your Project API",
+    "DESCRIPTION": "Your project description",
+    "VERSION": "1.0.0",
+    "SERVE_INCLUDE_SCHEMA": False,
+    "SERVERS": [{"url": BASE_URL}, {"url": "http://localhost:8000"}],
+}
+
+
+DJANGO_GUID = {
+    "GUID_HEADER_NAME": "trace_id",
+    "VALIDATE_GUID": True,
+    "RETURN_HEADER": True,
+    "EXPOSE_HEADER": True,
+    "UUID_LENGTH": 32,
+}

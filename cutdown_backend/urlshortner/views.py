@@ -2,6 +2,8 @@ import logging
 
 from django.http import HttpResponseRedirect
 from django.utils.decorators import method_decorator
+from django_guid import get_guid
+from drf_spectacular.utils import extend_schema
 from ratelimit.decorators import ratelimit
 from rest_framework import status
 from rest_framework.permissions import AllowAny
@@ -10,23 +12,39 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from urlshortner.models import ShortenURL
-from urlshortner.serialisers import ShortenURLResponseSerialiser, ShortenURLSerialiser
+from urlshortner.serialisers import (
+    NotFoundSerialiser,
+    ShortenURLResponseSerialiser,
+    ShortenURLSerialiser,
+)
 
 log = logging.getLogger("django")
 
 
+@extend_schema(
+    summary="Server Health",
+    description="This is used to check the server health",
+    tags=["Server Health Check"],
+)
 class HealthCheckView(APIView):
     permission_classes = [
         AllowAny,
     ]
-    allowed_methods = "get"
+    allowed_methods = ("get",)
 
     def get(self, request: Request):
         return Response(
-            data={"health_status": "server is running"}, status=status.HTTP_200_OK
+            data={"message": "server is running"}, status=status.HTTP_200_OK
         )
 
 
+@extend_schema(
+    summary="URL Shortner",
+    description="API is used for shortning the URL",
+    tags=["URL Shortner"],
+    request=ShortenURLSerialiser,
+    responses={201: ShortenURLResponseSerialiser},
+)
 class ShortenURLView(APIView):
     serializer_class = ShortenURLSerialiser
     permission_classes = [
@@ -45,21 +63,31 @@ class ShortenURLView(APIView):
         )
 
 
+@extend_schema(
+    summary="Redirect API",
+    description="API is used for redirecting to target URL",
+    tags=["Redirect"],
+)
 class RedirectURLView(APIView):
     permission_classes = [
         AllowAny,
     ]
     allowed_methods = ("get",)
 
-    def get(self, request: Request, shorten_key: str):
+    def get(self, request: Request, cutdown_url: str):
         clients_ip = request.META.get("REMOTE_ADDR")
-        log.info(f"clients IP {clients_ip}")
+        log.info(f"CLIENT IP {clients_ip}")
 
-        instance = ShortenURL.objects.filter(shorten_key=shorten_key).first()
+        instance = ShortenURL.objects.filter(shorten_key=cutdown_url).first()
         if not instance:
-            log.info(f"shorten key {shorten_key} not found")
+            log.info(f"shorten key {cutdown_url} not found")
             return Response(
-                data={"message": "Unable to find URL to redirect to"},
+                data=NotFoundSerialiser(
+                    {
+                        "message": "Unable to find URL to redirect to",
+                        "trace_id": get_guid(),
+                    }
+                ).data,
                 status=status.HTTP_404_NOT_FOUND,
             )
         return HttpResponseRedirect(redirect_to=instance.origin_url)
