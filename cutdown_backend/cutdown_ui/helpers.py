@@ -16,7 +16,7 @@ def get_shorten_url(url: str) -> str:
     if response.status_code == status.HTTP_201_CREATED:
         data = response.json()
 
-    if response.status_code == status.HTTP_403_FORBIDDEN:
+    elif response.status_code == status.HTTP_403_FORBIDDEN:
 
         data = {
             "message": "Please come back in few minutes. Many shorten URLs has been created"
