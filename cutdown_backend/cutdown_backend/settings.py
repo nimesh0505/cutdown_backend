@@ -41,7 +41,6 @@ INSTALLED_APPS = [
     "django_guid",
     "drf_spectacular",
     "urlshortner",
-    "cutdown_ui",
 ]
 
 REST_FRAMEWORK = {
