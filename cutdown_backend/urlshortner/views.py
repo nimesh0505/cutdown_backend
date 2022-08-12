@@ -1,5 +1,4 @@
 import logging
-from cgitb import enable
 
 from django.http import HttpResponseRedirect
 from django.utils.decorators import method_decorator

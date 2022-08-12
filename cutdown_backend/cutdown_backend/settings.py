@@ -23,7 +23,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.getenv("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.getenv("DEBUG")
 
 ALLOWED_HOSTS = [os.getenv("ALLOWED_HOSTS")]
 
@@ -39,6 +39,8 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "rest_framework",
     "django_guid",
+    "corsheaders",
+    "users",
     "drf_spectacular",
     "urlshortner",
 ]
@@ -51,6 +53,7 @@ REST_FRAMEWORK = {
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
+    "corsheaders.middleware.CorsMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
@@ -158,3 +161,32 @@ ENVIRONMENT = os.getenv("ENVIRONMENT")
 
 
 BACKEND_URL = os.getenv("BACKEND_URL")
+
+CORS_ORIGIN_ALLOW_ALL = True
+
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "filters": {"correlation_id": {"()": "django_guid.log_filters.CorrelationId"}},
+    "formatters": {
+        "standard": {
+            "format": "%(asctime)s [%(levelname)-2s] "
+            "[%(correlation_id)s] %(message)s [%(pathname)s:%(lineno)d]",
+            "datefmt": "%Y-%m-%d %H:%M:%S",
+        }
+    },
+    "handlers": {
+        "console": {
+            "class": "logging.StreamHandler",
+            "formatter": "standard",
+            "filters": ["correlation_id"],
+        }
+    },
+    "loggers": {
+        "django": {
+            "level": os.getenv("DJANGO_LOG_LEVEL", default="INFO"),
+            "handlers": ["console"],
+            "propagate": False,
+        }
+    },
+}
