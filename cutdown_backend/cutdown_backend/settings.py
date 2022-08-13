@@ -40,13 +40,19 @@ INSTALLED_APPS = [
     "rest_framework",
     "django_guid",
     "corsheaders",
-    "users",
     "drf_spectacular",
+    "django_user_agents",
+    "users",
     "urlshortner",
 ]
 
 REST_FRAMEWORK = {
     "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
+    "DEFAULT_AUTHENTICATION_CLASSES": [
+        "rest_framework_simplejwt.authentication.JWTAuthentication",
+        "rest_framework.authentication.SessionAuthentication",
+        "rest_framework.authentication.BasicAuthentication",
+    ],
 }
 
 
@@ -59,6 +65,7 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "django_user_agents.middleware.UserAgentMiddleware",
     "django_guid.middleware.guid_middleware",
 ]
 
@@ -140,8 +147,8 @@ BASE_URL = os.getenv("BASE_URL")
 
 
 SPECTACULAR_SETTINGS = {
-    "TITLE": "Your Project API",
-    "DESCRIPTION": "Your project description",
+    "TITLE": "Cutdown Swagger API",
+    "DESCRIPTION": "",
     "VERSION": "1.0.0",
     "SERVE_INCLUDE_SCHEMA": False,
     "SERVERS": [{"url": BASE_URL}, {"url": "http://localhost:8000"}],

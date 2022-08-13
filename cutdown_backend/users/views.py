@@ -1,17 +1,14 @@
 import logging
 
-from django import http
-from django_guid import get_guid
 from drf_spectacular.utils import extend_schema
 from jsonschema import ValidationError
-from ratelimit.decorators import ratelimit
 from rest_framework import status, viewsets
 from rest_framework.permissions import AllowAny
-from rest_framework.request import Request
 from rest_framework.response import Response
+from rest_framework.views import APIView
 
 from .models import CustomUser
-from .serialisers import MessageSerialiser, SignupSerialiser
+from .serialisers import MessageSerialiser, SignInSerialiser, SignupSerialiser
 
 log = logging.getLogger("django")
 
@@ -47,3 +44,28 @@ class SignupView(viewsets.ModelViewSet):
                 MessageSerialiser({"message": e.message}).data,
                 status=status.HTTP_400_BAD_REQUEST,
             )
+
+
+@extend_schema(
+    summary="Sign In",
+    description="API is used for user to sign in our platform",
+    tags=["Users"],
+    request=SignInSerialiser,
+)
+class SignInView(viewsets.ModelViewSet):
+    serializer_class = SignInSerialiser
+    permission_classes = (AllowAny,)
+    http_method_names = ("post",)
+    queryset = CustomUser.objects.all()
+
+    def create(self, request, *args, **kwargs):
+        serialisers = self.serializer_class(data=request.data)
+        serialisers.is_valid(raise_exception=True)
+        validated_data = serialisers.validated_data
+        validated_data["username"] = validated_data["email"]
+        from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
+
+        auth_serializer = TokenObtainPairSerializer(data=validated_data)
+        auth_serializer.is_valid(raise_exception=True)
+
+        return auth_serializer.validated_data

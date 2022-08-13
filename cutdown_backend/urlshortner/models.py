@@ -3,6 +3,7 @@ import string
 
 from django.db import models
 from django.utils import timezone
+from users.models import CustomUser
 
 
 def generate_random_string():
@@ -21,3 +22,7 @@ class ShortenURL(models.Model):
         if not self.id:
             self.created_at = timezone.now()
         return super(ShortenURL, self).save(*args, **kwargs)
+
+
+class ShortenURLBasic(ShortenURL):
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)

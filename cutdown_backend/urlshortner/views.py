@@ -67,7 +67,7 @@ class ShortenURLView(APIView):
     summary="Redirect API",
     description="API is used for redirecting to target URL",
     tags=["Redirect"],
-    exclude=True,
+    exclude=False,
 )
 class RedirectURLView(APIView):
     permission_classes = [
