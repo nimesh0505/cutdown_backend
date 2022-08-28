@@ -16,6 +16,7 @@ from urlshortner.serialisers import (
     NotFoundSerialiser,
     ShortenURLResponseSerialiser,
     ShortenURLSerialiser,
+    FreeShortenURLSerialiser
 )
 
 log = logging.getLogger("django")
@@ -40,13 +41,13 @@ class HealthCheckView(APIView):
 
 @extend_schema(
     summary="URL Shortner",
-    description="API is used for shortning the URL",
+    description="This API is used for shortning the URL and it free. This has rate limitter",
     tags=["URL Shortner"],
     request=ShortenURLSerialiser,
     responses={201: ShortenURLResponseSerialiser},
 )
-class ShortenURLView(APIView):
-    serializer_class = ShortenURLSerialiser
+class FreeShortenURLView(APIView):
+    serializer_class = FreeShortenURLSerialiser
     permission_classes = [
         AllowAny,
     ]
@@ -62,6 +63,30 @@ class ShortenURLView(APIView):
             status=status.HTTP_201_CREATED,
         )
 
+
+@extend_schema(
+    summary="URL Shortner",
+    description="This API is used for shortning the URL for user who are registered on our platform",
+    tags=["URL Shortner"],
+    request=ShortenURLSerialiser,
+    responses={201: ShortenURLResponseSerialiser},
+)
+class ShortenURLView(APIView):
+    serializer_class = ShortenURLSerialiser
+    permission_classes = [
+        AllowAny,
+    ]
+    allowed_methods = ("post",)
+
+    def post(self, request: Request):
+        user_id = request.user.id
+        serializer = self.serializer_class(data=request.data, context= {"user_id": user_id})
+        serializer.is_valid(raise_exception=True)
+        result = serializer.create()
+        return Response(
+            data=ShortenURLResponseSerialiser({"shorten_url": result.shorten_key}).data,
+            status=status.HTTP_201_CREATED,
+        )
 
 @extend_schema(
     summary="Redirect API",

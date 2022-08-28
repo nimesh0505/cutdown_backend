@@ -30,7 +30,7 @@ class TestShortenURLCreation(APITestCase):
         return super().setUp()
 
     def test_should_successfully_return_shorten_url(self):
-        response = client.post(reverse("shorten_url"), {"origin_url": self.origin_url})
+        response = client.post(reverse("free_shorten_url"), {"origin_url": self.origin_url})
         response_body = response.json()
 
         instance = ShortenURL.objects.get(origin_url=self.origin_url)
@@ -44,7 +44,7 @@ class TestShortenURLCreation(APITestCase):
     def test_should_duplicate_origin_url(self):
 
         for _ in range(3):
-            client.post(reverse("shorten_url"), {"origin_url": self.origin_url})
+            client.post(reverse("free_shorten_url"), {"origin_url": self.origin_url})
         total_records = ShortenURL.objects.all().count()
 
         self.assertEqual(total_records, 1)
