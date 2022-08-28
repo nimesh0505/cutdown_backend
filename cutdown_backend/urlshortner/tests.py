@@ -30,7 +30,9 @@ class TestShortenURLCreation(APITestCase):
         return super().setUp()
 
     def test_should_successfully_return_shorten_url(self):
-        response = client.post(reverse("free_shorten_url"), {"origin_url": self.origin_url})
+        response = client.post(
+            reverse("free_shorten_url"), {"origin_url": self.origin_url}
+        )
         response_body = response.json()
 
         instance = ShortenURL.objects.get(origin_url=self.origin_url)
@@ -38,7 +40,10 @@ class TestShortenURLCreation(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(
             response_body,
-            {"shorten_url": f"{settings.BASE_URL}/{instance.shorten_key}"},
+            {
+                "shorten_url": f"{settings.BASE_URL}/{instance.shorten_key}",
+                "trace_id": response_body.get("trace_id"),
+            },
         )
 
     def test_should_duplicate_origin_url(self):
