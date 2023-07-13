@@ -5,12 +5,11 @@ from jsonschema import ValidationError
 from rest_framework import status, viewsets
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
-from rest_framework.views import APIView
 
 from .models import CustomUser
 from .serialisers import MessageSerialiser, SignInSerialiser, SignupSerialiser
 
-log = logging.getLogger("django")
+log = logging.getLogger(__name__)
 
 
 @extend_schema(

@@ -7,7 +7,7 @@ from rest_framework import serializers
 from .models import CustomUser
 from .selectors import get_user_by_email
 
-log = logging.getLogger("django")
+log = logging.getLogger(__name__)
 
 
 class MessageSerialiser(serializers.Serializer):

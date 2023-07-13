@@ -13,13 +13,13 @@ from rest_framework.views import APIView
 
 from urlshortner.models import ShortenURL
 from urlshortner.serialisers import (
+    FreeShortenURLSerialiser,
     NotFoundSerialiser,
     ShortenURLResponseSerialiser,
     ShortenURLSerialiser,
-    FreeShortenURLSerialiser
 )
 
-log = logging.getLogger("django")
+log = logging.getLogger(__name__)
 
 
 @extend_schema(
@@ -80,13 +80,16 @@ class ShortenURLView(APIView):
 
     def post(self, request: Request):
         user_id = request.user.id
-        serializer = self.serializer_class(data=request.data, context= {"user_id": user_id})
+        serializer = self.serializer_class(
+            data=request.data, context={"user_id": user_id}
+        )
         serializer.is_valid(raise_exception=True)
         result = serializer.create()
         return Response(
             data=ShortenURLResponseSerialiser({"shorten_url": result.shorten_key}).data,
             status=status.HTTP_201_CREATED,
         )
+
 
 @extend_schema(
     summary="Redirect API",

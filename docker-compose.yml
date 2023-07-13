@@ -1,0 +1,9 @@
+services:
+  backend:
+    build: .
+    command: bash -c "python manage.py makemigrations && python manage.py migrate && python manage.py runserver 127.0.0.1:8000"
+    container_name: cutdown_backend
+    volumes:
+      - .:/cutdown_backend
+    ports:
+      - "8000:8000"
