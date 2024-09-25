@@ -3,8 +3,8 @@ import logging
 from django.http import HttpResponseRedirect
 from django.utils.decorators import method_decorator
 from django_guid import get_guid
+from django_ratelimit.decorators import ratelimit
 from drf_spectacular.utils import extend_schema
-from ratelimit.decorators import ratelimit
 from rest_framework import status
 from rest_framework.permissions import AllowAny
 from rest_framework.request import Request
@@ -53,8 +53,8 @@ class FreeShortenURLView(APIView):
     ]
     allowed_methods = ("post",)
 
-    @method_decorator(ratelimit(key="ip", rate="10/m", method="POST", block=True))
-    def post(self, request: Request):
+    @method_decorator(ratelimit(key="ip", rate="10/m", block=True))
+    def post(self, request: Request, *args, **kwargs):
         serializer = self.serializer_class(data=request.data)
         serializer.is_valid(raise_exception=True)
         result = serializer.create()
